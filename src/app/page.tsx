@@ -28,6 +28,18 @@ import { useSiteConfig } from '@/lib/use-site-config';
 export default function HomePage() {
   const siteConfig = useSiteConfig();
   const carouselRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      if (videoRef.current.readyState >= 2) {
+        setIsVideoLoaded(true);
+      }
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -92,29 +104,39 @@ export default function HomePage() {
       <Header theme="dark" />
 
       {/* ── Section 1: Cinematic High-Converting Hero with Interactive Quote Widget ── */}
-      <section className="relative w-full min-h-[680px] lg:min-h-[660px] xl:min-h-[700px] overflow-hidden flex items-start lg:items-center pt-10 pb-14 md:py-20 lg:py-10 xl:py-14">
+      <section className="relative w-full min-h-[680px] lg:min-h-[660px] xl:min-h-[700px] overflow-hidden flex items-start lg:items-center pt-10 pb-14 md:py-20 lg:py-10 xl:py-14 bg-[#0E0F10]">
+        {/* Subtle background ambient base while video buffers */}
+        <div className="absolute inset-0 bg-[#0E0F10]" />
+
         {/* Background Video or Custom Image */}
         {siteConfig.hero_image_1 ? (
           <img
             src={siteConfig.hero_image_1}
             alt="Hero background"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-out"
           />
         ) : (
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-cover"
+            preload="auto"
+            onLoadedData={() => setIsVideoLoaded(true)}
+            onCanPlay={() => setIsVideoLoaded(true)}
+            onPlaying={() => setIsVideoLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-out ${
+              isVideoLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+            }`}
           >
-            <source src="/bgvideo.mp4" type="video/mp4" />
+            <source src="/bgvideo.mp4?v=new" type="video/mp4" />
           </video>
         )}
 
-        {/* Ambient Dark Overlay tailored for two-column contrast */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0E0F10]/95 via-[#0E0F10]/85 to-[#0E0F10]/75 z-10 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0E0F10]/80 via-transparent to-[#0E0F10] z-10 pointer-events-none" />
+        {/* Ambient Dark Overlay — subtle luxury tint preserving high contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0E0F10]/90 via-[#0E0F10]/78 to-[#0E0F10]/65 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0E0F10]/70 via-transparent to-[#0E0F10]/90 z-10 pointer-events-none" />
 
         <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-10 xl:gap-12 items-center">

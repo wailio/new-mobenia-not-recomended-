@@ -35,3 +35,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large media assets
+bgvideo.mp4
+public/bgvideo.mp4
